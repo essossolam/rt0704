@@ -1,4 +1,6 @@
 import sys
+import requests
+import json
 
 class QueenChessBoard:
     def __init__(self, size):
@@ -60,7 +62,8 @@ def print_all_solutions_to_n_queen(size):
     configurations."""
     board = QueenChessBoard(size)
     number_of_solutions = print_all_solutions_helper(board)
-    print('Nombre de solutions:', number_of_solutions)
+
+    return number_of_solutions
  
 def print_all_solutions_helper(board):
     """Display a chessboard for each possible configuration of filling the given
@@ -84,4 +87,22 @@ def print_all_solutions_helper(board):
  
 # n = int(input('Enter n: '))
 n = int(sys.argv[1])
-print_all_solutions_to_n_queen(n)
+solutions = print_all_solutions_to_n_queen(n)
+
+APIENDPOINT = "http://127.0.0.1:5000"
+
+task = {
+    "pid":1,
+    "id":1,
+    "solutions":solutions
+}
+
+payload= {}
+queue2 = 'DONE'
+payload['task'] = task
+mydata = {"data": json.dumps(payload)}
+r = requests.post("{}/rabbit/{}".format(APIENDPOINT,queue2), data=mydata)
+print (payload)
+print("statut:{}".format(r.status_code))
+print(r.text)
+print ("Nombre de solutions: ",solutions)
