@@ -45,7 +45,25 @@ class QueenChessBoard:
                 return False
  
         return True
- 
+    
+def rabbit(solutions):
+    APIENDPOINT = "http://172.17.0.1:5000"
+
+    task = {
+        "pid":1,
+        "id":1,
+        "solutions":solutions
+    }
+
+    payload= {}
+    queue2 = 'DONE'
+    payload['task'] = task
+    mydata = {"data": json.dumps(payload)}
+    r = requests.post("{}/rabbit/{}".format(APIENDPOINT,queue2), data=mydata)
+    print (payload)
+    print("statut:{}".format(r.status_code))
+    print(r.text)
+
     # def display(self):
     #     for row in range(self.size):
     #         for column in range(self.size):
@@ -88,21 +106,4 @@ def print_all_solutions_helper(board):
 # n = int(input('Enter n: '))
 n = int(sys.argv[1])
 solutions = print_all_solutions_to_n_queen(n)
-
-APIENDPOINT = "http://127.0.0.1:5000"
-
-task = {
-    "pid":1,
-    "id":1,
-    "solutions":solutions
-}
-
-payload= {}
-queue2 = 'DONE'
-payload['task'] = task
-mydata = {"data": json.dumps(payload)}
-r = requests.post("{}/rabbit/{}".format(APIENDPOINT,queue2), data=mydata)
-print (payload)
-print("statut:{}".format(r.status_code))
-print(r.text)
-print ("Nombre de solutions: ",solutions)
+rabbit(solutions)
